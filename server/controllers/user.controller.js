@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
 
-//Routes below all have to do with log/reg  and authenication. For updating a Users specific portfolio and watch list skip to line 75.
+//Routes below all have to do with log/reg  and authenication. For updating a Users specific portfolio and watch list skip to line 88.
 
 //non authenicated controller
 
@@ -71,6 +71,19 @@ module.exports.LogOut2 = (req, res) => {
   res.clearCookie("usertoken");
   res.json({ msg: "ok"})
 }
+//controller to add a coin to the watchlist 
+module.exports.addCoinToWatchlist= (req, res) => {
+  let userId =  req.params.userId
+  User.findOneAndUpdate({_id: userId}, {$addToSet: {coinsTracked: req.body}}, {new: true, useFindAndModify:false, runValidators:true})
+    .then(newCoinWatched => {
+      res.send(newCoinWatched.coinsTracked)
+      }
+    )
+    .catch( err => {
+      console.log(err)
+      res.status(401).json(err)
+    })
+};
 
 /// This controller would be used for the inital purchase of a coin. The coin portfolio is an array of objects of individual coins 
 //containing info such as avg cost, dollars spent, total coin...
@@ -89,24 +102,27 @@ module.exports.addCoinToPortfolio= (req, res) => {
       res.status(401).json(err)
     })
 };
-
 //This method is to close your position in a coin (i.e sell ALL of the coin) it will remove the coin from the coin portfolio array and return a dollar value which can
-// be used with the update wallet method to deposit those dollars back into the user acct. 
-
+// be used with the update wallet method to deposit those dollars back into the user acct.
 module.exports.closeCoinPosition = (req, res) => {
-  let userId =  req.params.userId
-  User.findOneAndUpdate({_id: userId}, {$addToSet: {coinsPortfolio: req.body}}, {new: true, useFindAndModify:false, runValidators:true})
-    .then(newUser => {
-      res.send(newUser)
-      }
-    )
-    .catch( err => {
-      console.log(err)
-      res.status(401).json(err)
-    })
+  let userId = req.params.userId
+  User.findOneAndUpdate({_id: userId},{$pull: {coinsPortfolio: req.params.coinTicker}}, {new:true, useFindAndModify:false})
+  .then(newWatchList => {
+    res.send({newWatchList})
+    }
+  )
+  .catch( err => {
+    console.log(err)
+    res.status(401).json(err)
+  })
 };
 //Used for updating the coin in portfolio 
 //(buying and selling but not closing the total position i.e selling everything which would completely remove from the portfolio)
+module.exports.getCoinFromPortfolio = (req, res) => {
+	User.findOne({ _id: req.params.userId })
+  .then(user => res.send(user.coinsPortfolio.id(req.params.coinId)))
+  .catch(err => res.status(400).send(err))
+}
 
 module.exports.updateCoinInPortfolio= (req, res) => {
   let userId =  req.params.userId
@@ -127,7 +143,8 @@ module.exports.updateCoinInPortfolio= (req, res) => {
         res.status(401).json(err)
       })
 };
-// this method should be run after each purchase in order to update the users wallet
+// this method should be run after each purchase in order to update the users wallet, also ran on intial login to get up to date balance....
+//reflecting current coin prices
 module.exports.updateUserWallet = (req, res) => {
   let userId = req.params.userId
   User.findOneAndUpdate({_id: userId, 'wallet._id': req.params.walletId }, 
@@ -141,6 +158,8 @@ module.exports.updateUserWallet = (req, res) => {
     .catch(err => res.send(err))
 }
 
+
+//these methods are left for development purposes
 module.exports.findAllUsers = (req, res) => {
   User.find()
     .then(allDaUsers => res.json({ users: allDaUsers }))

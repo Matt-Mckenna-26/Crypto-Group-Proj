@@ -4,5 +4,5 @@ mongoose.connect("mongodb://localhost/name-api", {
     useUnifiedTopology:true,
     useFindAndModify:false,
 })
-    .then(() => console.log("Connected to data base"))
+    .then(() => console.log("Connected to database"))
     .catch((err) => console.log("Did not connect. error Code", err ));

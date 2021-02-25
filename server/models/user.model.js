@@ -29,7 +29,7 @@ const coinTransactionSchema = new mongoose.Schema({
 	},
 	numberOfCoins:{
 		type: Number
-	}, 
+	} 
 }, {timestamps:true})
 
 const walletSchema = new mongoose.Schema({
