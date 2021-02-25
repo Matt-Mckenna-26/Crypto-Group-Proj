@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
-
-mongoose.connect("mongodb://localhost/CrytoGroupLocal", {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
+const mongoose = require('mongoose');
+mongoose.connect("mongodb://localhost/name-api", {
+    useNewUrlParser:true,
+    useUnifiedTopology:true,
+    useFindAndModify:false,
 })
-	.then(() => console.log("Established a connection to the local DB for Group Crypto Proj"))
-	.catch(err => console.log("Something went wrong when connecting to the database", err));
+    .then(() => console.log("Connected to data base"))
+    .catch((err) => console.log("Did not connect. error Code", err ));
