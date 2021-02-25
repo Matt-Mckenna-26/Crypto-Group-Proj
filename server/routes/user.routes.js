@@ -18,8 +18,11 @@ module.exports = app => {
   //used to get a specific coin, useful to store toatl dollars when user opens transaction page on a specific coin 
   app.get("/api/coinInfo/:userId/:coinId", authenticate, UserController.getCoinFromPortfolio);
 
-  //route to add a coint to user watchlist 
+  //route to add/remove a coint to user watchlist 
   app.put("api/addToWatch/:userId", authenticate, UserController.addCoinToWatchlist);
+  app.put("api/removeFromWatchlist/:userId", authenticate, UserController.removeCoinFromWatchList);
+
+
   //Routes for inital purchase and selling all of a coin (removing it from the portfolio)
   app.put("/api/firstBuy/:userId", authenticate, UserController.addCoinToPortfolio);
   app.put("/api/sellAll/:userId/:coinTicker", authenticate, UserController.closeCoinPosition);

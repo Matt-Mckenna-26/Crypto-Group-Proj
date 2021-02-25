@@ -71,7 +71,7 @@ module.exports.LogOut2 = (req, res) => {
   res.clearCookie("usertoken");
   res.json({ msg: "ok"})
 }
-//controller to add a coin to the watchlist 
+//controller to add/remove a coin to the watchlist 
 module.exports.addCoinToWatchlist= (req, res) => {
   let userId =  req.params.userId
   User.findOneAndUpdate({_id: userId}, {$addToSet: {coinsTracked: req.body}}, {new: true, useFindAndModify:false, runValidators:true})
@@ -83,6 +83,18 @@ module.exports.addCoinToWatchlist= (req, res) => {
       console.log(err)
       res.status(401).json(err)
     })
+};
+module.exports.removeCoinFromWatchList = (req, res) => {
+  let userId = req.params.userId
+  User.findOneAndUpdate({_id: userId},{$pull: {coinsTracked: {_id: req.body.coinId}}}, {new:true, useFindAndModify:false})
+  .then(newUser => {
+    res.send(newUser.coinsTracked)
+    }
+  )
+  .catch( err => {
+    console.log(err)
+    res.status(401).send({err})
+  })
 };
 
 /// This controller would be used for the inital purchase of a coin. The coin portfolio is an array of objects of individual coins 
