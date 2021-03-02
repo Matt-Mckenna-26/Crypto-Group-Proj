@@ -118,7 +118,7 @@ module.exports.addCoinToPortfolio= (req, res) => {
 // be used with the update wallet method to deposit those dollars back into the user acct.
 module.exports.closeCoinPosition = (req, res) => {
   let userId = req.params.userId
-  User.findOneAndUpdate({_id: userId},{$pull: {coinsPortfolio: req.params.coinTicker}}, {new:true, useFindAndModify:false})
+  User.findOneAndUpdate({_id: userId},{$pull: {coinsPortfolio: req.params.coinName}}, {new:true, useFindAndModify:false})
   .then(newWatchList => {
     res.send({newWatchList})
     }
@@ -128,14 +128,14 @@ module.exports.closeCoinPosition = (req, res) => {
     res.status(401).json(err)
   })
 };
-//Used for updating the coin in portfolio 
-//(buying and selling but not closing the total position i.e selling everything which would completely remove from the portfolio)
+//get specific coin info that is in your porfolio (avg cost, number of coins, dollars)
 module.exports.getCoinFromPortfolio = (req, res) => {
 	User.findOne({ _id: req.params.userId })
-  .then(user => res.send(user.coinsPortfolio.id(req.params.coinId)))
+  .then(user => res.send(user.coinsPortfolio.id(req.params.coinName)))
   .catch(err => res.status(400).send(err))
 }
-
+//Used for updating the coin in portfolio 
+//(buying and selling but not closing the total position i.e selling everything which would completely remove from the portfolio)
 module.exports.updateCoinInPortfolio= (req, res) => {
   let userId =  req.params.userId
   User.findOneAndUpdate({_id: userId, 'coinsPortfolio.ticker': req.params.coinTicker }, 

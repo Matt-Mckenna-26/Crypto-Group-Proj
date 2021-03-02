@@ -11,5 +11,5 @@ module.exports = app => {
 }
 
 module.exports = app => {
-    app.get('api/coinPricesInPortfolio', CoinController.GetPortfolioCoinPrices)
+    app.get('api/coinPricesInPortfolio/:coinNames', CoinController.GetCoinPortfolioPrices)
 }
