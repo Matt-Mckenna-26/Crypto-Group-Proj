@@ -16,19 +16,18 @@ module.exports = app => {
   app.get("/api/users/loggedin", authenticate, UserController.getLoggedInUser);
 
   //used to get a specific coin, useful to store toatl dollars when user opens transaction page on a specific coin 
-  app.get("/api/coinInfo/:userId/:coinId", authenticate, UserController.getCoinFromPortfolio);
+  app.get("/api/coinInfo/:userId/:coinName", authenticate, UserController.getCoinFromPortfolio);
 
-  //route to add/remove a coint to user watchlist 
+  //route to add/remove a coin to user watchlist 
   app.put("api/addToWatch/:userId", authenticate, UserController.addCoinToWatchlist);
   app.put("api/removeFromWatchlist/:userId", authenticate, UserController.removeCoinFromWatchList);
 
-
   //Routes for inital purchase and selling all of a coin (removing it from the portfolio)
   app.put("/api/firstBuy/:userId", authenticate, UserController.addCoinToPortfolio);
-  app.put("/api/sellAll/:userId/:coinTicker", authenticate, UserController.closeCoinPosition);
+  app.put("/api/sellAll/:userId/:coinName", authenticate, UserController.closeCoinPosition);
 
   //Route here is used for subsequent transactions (buying more... selling some(not all!))
-  app.put("/api/buysell/:userId/:coinTicker", authenticate, UserController.updateCoinInPortfolio);
+  app.put("/api/buysell/:userId/:coinName", authenticate, UserController.updateCoinInPortfolio);
 
   //this method should be called with the coin controllers to update the user wallet on login as well as subsequent trades. 
   app.put("/api/updateUserWallet/:userId/:walletId", authenticate, UserController.updateUserWallet);

@@ -22,7 +22,7 @@ module.exports.GetCoinChart = (req, res) => {
 }
 module.exports.GetCoinPortfolioPrices = (req, res) => {
     //https://api.coingecko.com/api/v3/simple/price?ids=bitcoin%2Cdogecoin%2Clitecoin&vs_currencies=usd example
-    axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${req.body.coinNames}vs_currencies=usd`)
+    axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${req.params.coinNames}vs_currencies=usd`)
     .then(axResp => {
         res.send(axResp.data)
     })
